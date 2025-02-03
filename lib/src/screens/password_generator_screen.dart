@@ -5,6 +5,8 @@ import '../utils/password_generator.dart';
 import '../widgets/password_display_card.dart';
 import '../widgets/password_options.dart';
 import '../widgets/particle_background.dart';
+import '../utils/database_helper.dart';
+import 'saved_passwords_screen.dart';
 
 class PasswordGeneratorScreen extends StatefulWidget {
   const PasswordGeneratorScreen({super.key});
@@ -15,6 +17,7 @@ class PasswordGeneratorScreen extends StatefulWidget {
 
 class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
     with SingleTickerProviderStateMixin {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -77,11 +80,63 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
     );
   }
 
+  Future<void> _savePassword() async {
+    if (_generatedPassword.isEmpty) return;
+
+    final TextEditingController titleController = TextEditingController();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Save Password'),
+        content: TextField(
+          controller: titleController,
+          decoration: const InputDecoration(
+            labelText: 'Title',
+            hintText: 'Enter a title for this password',
+          ),
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true && titleController.text.isNotEmpty && mounted) {
+      await _databaseHelper.savePassword(titleController.text, _generatedPassword);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password saved successfully')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppConstants.appName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SavedPasswordsScreen(),
+                ),
+              );
+            },
+            tooltip: 'View saved passwords',
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -147,16 +202,37 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _generatePassword,
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text(AppConstants.generateNewPassword),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _generatePassword,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: const Text(AppConstants.generateNewPassword),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: _generatedPassword.isEmpty ? null : _copyToClipboard,
-                icon: const Icon(Icons.copy_rounded),
-                label: const Text(AppConstants.copyToClipboard),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _generatedPassword.isEmpty ? null : _copyToClipboard,
+                      icon: const Icon(Icons.copy_rounded),
+                      label: const Text(AppConstants.copyToClipboard),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _generatedPassword.isEmpty ? null : _savePassword,
+                      icon: const Icon(Icons.save_rounded),
+                      label: const Text('Save Password'),
+                    ),
+                  ),
+                ],
               ),
             ],
               ),
