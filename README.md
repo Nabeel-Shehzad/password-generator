@@ -2,7 +2,7 @@
 
 A beautiful and secure password generator built with Flutter, featuring a modern UI with particle animation background.
 
-![App Screenshot](flutter_01.png)
+<img src="flutter_01.png" alt="App Screenshot" width="300">
 
 ## Features
 
