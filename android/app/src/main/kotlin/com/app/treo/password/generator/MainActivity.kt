@@ -1,4 +1,4 @@
-package com.example.flutter_password_generator
+package com.app.treo.password.generator
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -8,7 +8,7 @@
 PRODUCT_NAME = Password Generator
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.flutterPasswordGenerator
+PRODUCT_BUNDLE_IDENTIFIER = com.app.treo.password.generator
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

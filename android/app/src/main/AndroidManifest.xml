@@ -3,6 +3,9 @@
         android:label="Password Generator"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="android.app.category"
+            android:value="tools" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -7,6 +7,7 @@ import '../widgets/password_options.dart';
 import '../widgets/particle_background.dart';
 import '../utils/database_helper.dart';
 import 'saved_passwords_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class PasswordGeneratorScreen extends StatefulWidget {
   const PasswordGeneratorScreen({super.key});
@@ -141,6 +142,18 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
               );
             },
             tooltip: 'View saved passwords',
+          ),
+          IconButton(
+            icon: const Icon(Icons.privacy_tip_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyScreen(),
+                ),
+              );
+            },
+            tooltip: 'Privacy Policy',
           ),
         ],
       ),
