@@ -27,6 +27,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
   bool _useLowercase = true;
   bool _useNumbers = true;
   bool _useSpecialChars = true;
+  bool _isPasswordCopied = false;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
 
     setState(() {
       _generatedPassword = password;
+      _isPasswordCopied = false;
     });
     _animationController.forward(from: 0);
   }
@@ -68,6 +70,10 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
     
     await Clipboard.setData(ClipboardData(text: _generatedPassword));
     if (!mounted) return;
+    
+    setState(() {
+      _isPasswordCopied = true;
+    });
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -226,10 +232,13 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen>
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _generatedPassword.isEmpty ? null : _savePassword,
-                      icon: const Icon(Icons.save_rounded),
-                      label: const Text('Save Password'),
+                    child: Tooltip(
+                      message: _isPasswordCopied ? 'Save this password' : 'Copy password first before saving',
+                      child: OutlinedButton.icon(
+                        onPressed: (_generatedPassword.isEmpty || !_isPasswordCopied) ? null : _savePassword,
+                        icon: const Icon(Icons.save_rounded),
+                        label: const Text('Save Password'),
+                      ),
                     ),
                   ),
                 ],

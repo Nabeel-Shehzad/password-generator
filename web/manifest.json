@@ -1,11 +1,11 @@
 {
-  "name": "flutter_password_generator",
-  "short_name": "flutter_password_generator",
+  "name": "Password Generator",
+  "short_name": "Password Gen",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+  "description": "A secure password generator with modern UI and password management features.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
 

@@ -20,11 +20,37 @@ class _SavedPasswordsScreenState extends State<SavedPasswordsScreen> {
     _savedPasswords = _databaseHelper.getSavedPasswords();
   }
 
-  Future<void> _deletePassword(int id) async {
-    await _databaseHelper.deletePassword(id);
-    setState(() {
-      _savedPasswords = _databaseHelper.getSavedPasswords();
-    });
+  Future<void> _deletePassword(int id, String title) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Password'),
+        content: Text('Are you sure you want to delete "$title"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true && mounted) {
+      await _databaseHelper.deletePassword(id);
+      setState(() {
+        _savedPasswords = _databaseHelper.getSavedPasswords();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password deleted')),
+      );
+    }
   }
 
   Future<void> _copyToClipboard(String password) async {
@@ -102,7 +128,7 @@ class _SavedPasswordsScreenState extends State<SavedPasswordsScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),
-                        onPressed: () => _deletePassword(password['id']),
+                        onPressed: () => _deletePassword(password['id'], password['title']),
                         tooltip: 'Delete password',
                       ),
                     ],
